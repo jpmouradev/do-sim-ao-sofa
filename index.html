@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chá de Casa Nova | Nossa Nova Jornada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --text-color: #2c3e50;
+            --accent-color: #a3b8b0; 
+            --accent-dark: #7a8d87;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            background: url('https://i.ibb.co/Q7njTCBj/Whats-App-Image-2026-01-16-at-21-49-08.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; justify-content: center; padding: 40px 20px; color: var(--text-color);
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); z-index: -1;
+        }
+
+        .container {
+            width: 100%; max-width: 1000px; background: var(--glass-bg);
+            backdrop-filter: blur(25px); border: 1px solid var(--glass-border);
+            border-radius: 40px; padding: 60px 40px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            text-align: center; position: relative;
+        }
+
+        /* BOTÃO DE ADMIN - VOCÊ VAI DELETAR ESSA LINHA DEPOIS */
+        .admin-toggle { position: absolute; top: 20px; right: 30px; background: rgba(255,255,255,0.3); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10; }
+
+        h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 10px; color: #333; }
+        .intro-box {
+            text-align: justify;
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        .subtitle { font-weight: 300; letter-spacing: 4px; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 50px; }
+
+        .tabs-nav { display: flex; justify-content: center; gap: 40px; margin-bottom: 60px; }
+        .tab-btn { background: none; border: none; font-size: 1rem; cursor: pointer; padding: 10px 0; color: var(--text-color); border-bottom: 2px solid transparent; opacity: 0.5; transition: 0.4s; }
+        .tab-btn.active { border-bottom: 2px solid var(--accent-color); opacity: 1; font-weight: 600; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.8s ease; }
+
+        .gift-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+
+        .gift-card {
+            background: rgba(255, 255, 255, 0.25); border: 1px solid var(--glass-border);
+            border-radius: 25px; overflow: hidden; display: flex; flex-direction: column;
+            aspect-ratio: 1 / 1.1; transition: 0.4s; position: relative;
+        }
+
+        .gift-image { width: 100%; height: 70%; object-fit: cover; }
+        .gift-content { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; text-align: left; }
+        .gift-name { font-weight: 600; font-size: 1rem; }
+        .gift-desc { font-size: 0.75rem; opacity: 0.7; margin-bottom: 10px; }
+        .gift-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: auto; 
+        }
+        .gift-price { 
+            font-weight: 600; 
+        }
+        .gift-buttons { 
+            display: flex; 
+            gap: 5px; 
+        }        
+        .btn-gift { background: var(--accent-color); color: white; padding: 8px 12px; border-radius: 10px; border: none; cursor: pointer; }
+
+        .btn-del { background: #e57373; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; position: absolute; top: 10px; right: 10px; display: none; }
+        .body-admin .btn-del { display: block; }
+        .add-card { border: 2px dashed var(--accent-color); display: none; justify-content: center; align-items: center; cursor: pointer; }
+        .body-admin .add-card { display: flex; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; width: 90%; max-width: 400px; text-align: center; }
+        
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body id="bodyTag">
+
+<div class="container">
+    <!-- DELETE ESTE BOTÃO QUANDO TERMINAR A EDIÇÃO -->
+    <button class="admin-toggle" onclick="toggleAdmin()">🔒</button>
+    
+    <h1>Do Sim ao Sofá 💍🛋️</h1>
+    <div class="intro-box">
+        <p>Vamos oficializar o nosso sim e começar uma nova fase juntos. Esse dia será para celebrar, ao lado de quem amamos, a nossa união e o início da vida a dois. </p>
+            <p>Os presentes seguem o clima de chá de casa nova, pra nos ajudar a montar nosso cantinho. Vem brindar, rir, aproveitar e fazer parte desse começo com a gente! 💚</p>
+    </div>
+    <div class="tabs-nav">
+        <button class="tab-btn active" onclick="openTab(event, 'local')">Local e Dia</button>
+        <button class="tab-btn" onclick="openTab(event, 'confirmacao')">Confirmar Presença</button>
+        <button class="tab-btn" onclick="openTab(event, 'presentes')">Lista de Presentes</button>
+    </div>
+
+    <div id="local" class="section active">
+        <div style="background: rgba(255,255,255,0.2); padding: 40px; border-radius: 30px; border: 1px solid var(--glass-border); max-width: 500px; margin: 0 auto;">
+            <h2 style="font-family: 'Playfair Display'; margin-bottom: 20px;">Esperamos por você</h2>
+            <p><strong>Dia 14 de Março de 2026</strong></p>
+            <p><strong>Sábado • 16:00h</strong></p>
+            <br>
+            <p>Rua Gustavo Augusto Lima, 1041</p>
+            <p>Salão de Festas</p>
+        </div>
+    </div>
+
+    <div id="presentes" class="section">
+        <div class="gift-grid" id="giftGrid">
+            <div class="gift-card add-card" onclick="openAddModal()">
+                <span>+ Novo Item</span>
+            </div>
+        </div>
+        <button id="exportBtn" style="display:none; margin-top: 30px; padding: 10px; background: #333; color: white; border-radius: 10px; cursor: pointer;" onclick="exportList()">Gerar Código da Lista (JSON)</button>
+    </div>
+    <div id="confirmacao" class="section">
+        <div style="background: rgba(255,255,255,0.2); padding: 40px; border-radius: 30px; border: 1px solid var(--glass-border); max-width: 600px; margin: 0 auto;">
+            <h2 style="font-family: 'Playfair Display'; margin-bottom: 20px;">Confirme sua Presença</h2>
+            <p style="margin-bottom: 30px; line-height: 1.6;">
+                Sua presença é muito importante para nós! Por favor, confirme até <strong>7 de Março</strong> para nos ajudar com a organização.
+            </p>
+            <a href="https://forms.gle/3DM7qM9oSxuRwhaM8" target="_blank" 
+               style="display: inline-block; background: var(--accent-color); color: white; padding: 15px 40px; border-radius: 15px; text-decoration: none; font-weight: 600; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"
+               onmouseover="this.style.background='var(--accent-dark)'; this.style.transform='translateY(-2px)'"
+               onmouseout="this.style.background='var(--accent-color)'; this.style.transform='translateY(0)'">
+                📝 Preencher Confirmação
+            </a>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.7;">
+                O formulário abre em uma nova janela
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <h3>Adicionar Presente</h3>
+        <input type="text" id="inName" placeholder="Nome do Item">
+        <textarea id="inDesc" placeholder="Descrição"></textarea>
+        <input type="number" id="inPrice" placeholder="Preço (R$)">
+        <input type="text" id="inImg" placeholder="Link da Imagem">
+        <button class="btn-gift" style="width: 100%" onclick="saveGift()">Salvar</button>
+        <p onclick="closeModal('addModal')" style="cursor:pointer; margin-top:10px">Cancelar</p>
+    </div>
+</div>
+
+<div id="pixModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalGiftName"></h3>
+        <div id="qrcode" style="display: flex; justify-content: center; margin: 15px 0;"></div>
+        <p id="pixCode" style="font-size: 0.6rem; word-break: break-all; background: #f4f4f4; padding: 10px; border-radius: 10px;"></p>
+        <button class="btn-gift" style="width: 100%" onclick="copyPix()">Copiar Código</button>
+        <p onclick="closeModal('pixModal')" style="cursor:pointer; margin-top:10px">Fechar</p>
+    </div>
+</div>
+
+<div id="cartaoModal" class="modal">
+    <div class="modal-content">
+        <h3 id="cartaoGiftName" style="margin-bottom: 10px;"></h3>
+        <p style="font-size: 0.9rem; margin-bottom: 20px;">Você será redirecionado para o pagamento seguro via PicPay.</p>
+        
+        <a id="btnLinkCartao" href="#" target="_blank" class="btn-gift" style="width: 100%; display: block; font-size: 1rem; margin-bottom: 15px;">Ir para Pagamento</a>
+        
+        <p style="font-size: 0.7rem; color: #999; margin-bottom: 5px;">Ou copie o link:</p>
+        <p id="txtLinkCartao" style="font-size: 0.6rem; word-break: break-all; background: #f4f4f4; padding: 10px; border-radius: 10px; color: #666;"></p>
+        
+        <p onclick="closeModal('cartaoModal')" style="cursor:pointer; margin-top:20px; text-decoration: underline; font-size: 0.8rem;">Voltar</p>
+    </div>
+</div>
+
+<script>
+    let gifts = [{
+        "name": "Copo",
+        "desc": "Copo",
+        "price": "20",
+        "image": "https://images.unsplash.com/photo-1553880414-5fe13d83ddb6?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+        "name": "aIRFRYER",
+        "desc": "Copo",
+        "price": "20",
+        "image": "https://m.media-amazon.com/images/I/51G4AxVAJxL._AC_SL1000_.jpg"
+    }
+    ];
+
+    const localSaved = localStorage.getItem('myGifts');
+    if(localSaved && gifts.length === 0) {
+        gifts = JSON.parse(localSaved);
+    }
+
+    const MINHA_CHAVE_PIX = "jpmourabraga@gmail.com";
+    const NOME_BENEFICIARIO = "João Pedro Moura Braga";
+    const CIDADE_BENEFICIARIO = "Fortaleza";
+    const SEU_USUARIO_PICPAY = "amanda.souto8";
+    let isAdmin = false;
+
+    function toggleAdmin() {
+        isAdmin = !isAdmin;
+        document.getElementById('bodyTag').classList.toggle('body-admin', isAdmin);
+        document.getElementById('exportBtn').style.display = isAdmin ? 'inline-block' : 'none';
+        renderGifts();
+    }
+
+    function renderGifts() {
+        const grid = document.getElementById('giftGrid');
+        grid.querySelectorAll('.gift-card:not(.add-card)').forEach(c => c.remove());
+
+        
+        gifts.forEach((g, i) => {
+            const card = document.createElement('div');
+            card.className = 'gift-card';
+            card.innerHTML = `<button class="btn-del" onclick="deleteGift(${i})">X</button>
+                <img src="${g.image}" class="gift-image">
+                <div class="gift-content">
+                    <p class="gift-name">${g.name}</p>
+                    <p class="gift-desc">${g.desc}</p>
+                    <div class="gift-footer">
+                        <span class="gift-price">R$ ${parseFloat(g.price).toFixed(2)}</span>
+                        <div class="gift-buttons">
+                            <button class="btn-gift" onclick="generatePixModal(${i})">Pix</button>
+                            <button class="btn-gift" onclick="generateCartaoModal(${i})">Cartão</button>
+                        </div>
+                    </div>
+                </div>`;
+            grid.prepend(card);
+        });
+    }
+
+    function saveGift() {
+        const g = {
+            name: document.getElementById('inName').value,
+            desc: document.getElementById('inDesc').value,
+            price: document.getElementById('inPrice').value,
+            image: document.getElementById('inImg').value
+        };
+        gifts.push(g);
+        localStorage.setItem('myGifts', JSON.stringify(gifts));
+        renderGifts();
+        closeModal('addModal');
+    }
+
+    function deleteGift(i) {
+        gifts.splice(i, 1);
+        localStorage.setItem('myGifts', JSON.stringify(gifts));
+        renderGifts();
+    }
+
+    function exportList() {
+        const json = JSON.stringify(gifts, null, 4);
+        console.log(json);
+        alert("Código gerado no Console (F12) e copiado para sua área de transferência!");
+        navigator.clipboard.writeText(json);
+    }
+
+    function openAddModal() { document.getElementById('addModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openTab(e, n) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(n).classList.add('active');
+        e.currentTarget.classList.add('active');
+    }
+
+    function generatePixModal(i) {
+        const g = gifts[i];
+        document.getElementById('modalGiftName').innerText = g.name;
+        const payload = generatePixPayload(MINHA_CHAVE_PIX, NOME_BENEFICIARIO, CIDADE_BENEFICIARIO, parseFloat(g.price), g.name);
+        document.getElementById('qrcode').innerHTML = "";
+        new QRCode(document.getElementById("qrcode"), { text: payload, width: 150, height: 150 });
+        document.getElementById('pixCode').innerText = payload;
+        document.getElementById('pixModal').style.display = 'flex';
+    }
+    function generateCartaoModal(i) {
+        const g = gifts[i];
+        const link = `https://picpay.me/${SEU_USUARIO_PICPAY}/${parseFloat(g.price).toFixed(2)}`;
+        document.getElementById('cartaoGiftName').innerText = g.name + " - R$ " + parseFloat(g.price).toFixed(2);
+        document.getElementById('btnLinkCartao').href = link;
+        document.getElementById('txtLinkCartao').innerText = link;
+        document.getElementById('cartaoModal').style.display = 'flex';
+    }
+
+
+    function copyPix() { navigator.clipboard.writeText(document.getElementById('pixCode').innerText); alert("Pix copiado!"); }
+
+    function generatePixPayload(key, name, city, amount, desc) {
+        const strTrim = (s) => s.substring(0, 25).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        const format = (id, val) => id + String(val.length).padStart(2, '0') + val;
+        const info = format('00', 'br.gov.bcb.pix') + format('01', key);
+        let p = format('00', '01') + format('26', info) + format('52', '0000') + format('53', '986') + 
+                format('54', amount.toFixed(2)) + format('58', 'BR') + format('59', strTrim(name)) + 
+                format('60', strTrim(city)) + format('62', format('05', strTrim(desc).replace(/\s/g, ''))) + "6304";
+        const crc = (d) => {
+            let r = 0xFFFF;
+            for (let i = 0; i < d.length; i++) {
+                r ^= d.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) r = (r & 0x8000) ? (r << 1) ^ 0x1021 : r << 1;
+            }
+            return (r & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        };
+        return p + crc(p);
+    }
+
+    renderGifts();
+</script>
+
+</body>
+</html>
+
