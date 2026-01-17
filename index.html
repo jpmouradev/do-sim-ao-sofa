@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chá de Casa Nova | Nossa Nova Jornada</title>
+    <title>Do Sim ao Sofá</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -163,6 +163,7 @@
         <textarea id="inDesc" placeholder="Descrição"></textarea>
         <input type="number" id="inPrice" placeholder="Preço (R$)">
         <input type="text" id="inImg" placeholder="Link da Imagem">
+        <input type="text" id="Linkcartao" placeholder="Link do cartão">
         <button class="btn-gift" style="width: 100%" onclick="saveGift()">Salvar</button>
         <p onclick="closeModal('addModal')" style="cursor:pointer; margin-top:10px">Cancelar</p>
     </div>
@@ -197,13 +198,15 @@
         "name": "Copo",
         "desc": "Copo",
         "price": "20",
-        "image": "https://images.unsplash.com/photo-1553880414-5fe13d83ddb6?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "image": "https://images.unsplash.com/photo-1553880414-5fe13d83ddb6?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "link_cartao": "https://picpay.me/amanda.souto8/20.00",
     },
     {
         "name": "aIRFRYER",
         "desc": "Copo",
         "price": "20",
-        "image": "https://m.media-amazon.com/images/I/51G4AxVAJxL._AC_SL1000_.jpg"
+        "image": "https://m.media-amazon.com/images/I/51G4AxVAJxL._AC_SL1000_.jpg",
+        "link_cartao": "https://picpay.me/amanda.souto8/10.00",
     }
     ];
 
@@ -215,7 +218,6 @@
     const MINHA_CHAVE_PIX = "jpmourabraga@gmail.com";
     const NOME_BENEFICIARIO = "João Pedro Moura Braga";
     const CIDADE_BENEFICIARIO = "Fortaleza";
-    const SEU_USUARIO_PICPAY = "amanda.souto8";
     let isAdmin = false;
 
     function toggleAdmin() {
@@ -255,7 +257,8 @@
             name: document.getElementById('inName').value,
             desc: document.getElementById('inDesc').value,
             price: document.getElementById('inPrice').value,
-            image: document.getElementById('inImg').value
+            image: document.getElementById('inImg').value,
+            link_cartao: document.getElementById('Linkcartao').value
         };
         gifts.push(g);
         localStorage.setItem('myGifts', JSON.stringify(gifts));
@@ -296,7 +299,7 @@
     }
     function generateCartaoModal(i) {
         const g = gifts[i];
-        const link = `https://picpay.me/${SEU_USUARIO_PICPAY}/${parseFloat(g.price).toFixed(2)}`;
+        const link = g.link_cartao;
         document.getElementById('cartaoGiftName').innerText = g.name + " - R$ " + parseFloat(g.price).toFixed(2);
         document.getElementById('btnLinkCartao').href = link;
         document.getElementById('txtLinkCartao').innerText = link;
@@ -329,4 +332,3 @@
 
 </body>
 </html>
-
